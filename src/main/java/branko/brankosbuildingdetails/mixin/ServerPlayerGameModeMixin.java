@@ -29,6 +29,12 @@ public abstract class ServerPlayerGameModeMixin {
 	private void interceptGlassPanelBreak(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
 		ServerPlayer player = this.player;
 
+		// Don't allow breaking if the held item can't destroy blocks (e.g., swords in creative mode)
+		BlockState stateForCheck = level.getBlockState(pos);
+		if (!player.getMainHandItem().canDestroyBlock(stateForCheck, level, pos, player)) {
+			return;
+		}
+
 		// Get the breaking context to verify this is a tracked glass panel break
 		GlassPanelBreakContext.BreakInfo breakInfo = GlassPanelBreakContext.getBreakingInfo(player);
 		if (breakInfo == null || !breakInfo.pos().equals(pos)) {

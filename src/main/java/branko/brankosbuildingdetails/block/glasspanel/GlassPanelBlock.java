@@ -169,8 +169,10 @@ public class GlassPanelBlock extends MultifaceBlock {
 			return null;
 		}
 
-		// Determine which face to add
-		Direction faceToAdd = direction;
+		// Determine which face to add — the panel shape sits at the edge matching the
+		// face direction, so we use the opposite of the clicked face to attach the panel
+		// to the clicked block face
+		Direction faceToAdd = direction.getOpposite();
 		if (blockState.getBlock() instanceof GlassPanelBlock) {
 			// Clicking on an existing glass panel — check if we hit an existing face
 			double x = context.getClickLocation().x() - context.getClickedPos().getX();

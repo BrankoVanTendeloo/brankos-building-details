@@ -1,15 +1,5 @@
 {
-  "parent": "minecraft:block/cube",
-  "textures": {
-    "particle": {
-      "force_translucent": true,
-      "sprite": "minecraft:block/glass"
-    },
-    "end": {
-      "force_translucent": true,
-      "sprite": "minecraft:block/glass"
-    }
-  },
+  "parent": "brankos-building-details:block/glass_panel/glass_panel_base",
   "elements": [
     {
       "from": [0, 15, 0],

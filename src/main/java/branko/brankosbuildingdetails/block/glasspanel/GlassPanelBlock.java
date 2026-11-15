@@ -159,55 +159,9 @@ public class GlassPanelBlock extends MultifaceBlock {
 	}
 
 	@Override
-	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		// Override to allow placement without support blocks
-		BlockState blockState = context.getLevel().getBlockState(context.getClickedPos());
-		BlockState blockState1 = context.getLevel().getBlockState(context.getClickedPos().relative(context.getClickedFace()));
-		Direction direction = context.getClickedFace();
-
-		if (!isFaceSupported(direction)) {
-			return null;
-		}
-
-		// Determine which face to add — the panel shape sits at the edge matching the
-		// face direction, so we use the opposite of the clicked face to attach the panel
-		// to the clicked block face
-		Direction faceToAdd = direction.getOpposite();
-		if (blockState.getBlock() instanceof GlassPanelBlock) {
-			// Clicking on an existing glass panel — check if we hit an existing face
-			double x = context.getClickLocation().x() - context.getClickedPos().getX();
-			double y = context.getClickLocation().y() - context.getClickedPos().getY();
-			double z = context.getClickLocation().z() - context.getClickedPos().getZ();
-
-			Set<Direction> faces = availableFaces(blockState);
-			for (Direction face : faces) {
-				boolean onFace = switch (face) {
-					case NORTH -> z <= 1.0 / 16.0;
-					case SOUTH -> z >= 15.0 / 16.0;
-					case EAST -> x >= 15.0 / 16.0;
-					case WEST -> x <= 1.0 / 16.0;
-					case UP -> y >= 15.0 / 16.0;
-					case DOWN -> y <= 1.0 / 16.0;
-					default -> false;
-				};
-				if (onFace) {
-					// Clicked the inside of an existing face — add the opposite face
-					faceToAdd = face.getOpposite();
-					break;
-				}
-			}
-			// If no face was hit, we clicked the outside of the panel — use the clicked face
-		}
-
-		BlockState newState = blockState.is(this)
-			? blockState.setValue(getFaceProperty(faceToAdd), true)
-			: (BlockState) this.defaultBlockState().setValue(getFaceProperty(faceToAdd), true);
-
-		// Handle waterlogging
-		if (blockState1.getFluidState().isSourceOfType(Fluids.WATER)) {
-			newState = newState.setValue(WATERLOGGED, true);
-		}
-
-		return newState;
+	public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
+		// Allow placing glass panels on existing glass panels to add faces,
+		// but don't let other blocks replace this one
+		return super.canBeReplaced(state, context);
 	}
 }

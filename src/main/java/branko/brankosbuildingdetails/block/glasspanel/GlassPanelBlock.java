@@ -2,12 +2,10 @@ package branko.brankosbuildingdetails.block.glasspanel;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.MultifaceBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,6 +17,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.util.RandomSource;
 
 import java.util.Set;
 
@@ -28,6 +27,8 @@ public class GlassPanelBlock extends MultifaceBlock {
 	private static final VoxelShape EAST_SHAPE = Block.box(15.0, 0.0, 0.0, 16.0, 16.0, 16.0);
 	private static final VoxelShape SOUTH_SHAPE = Block.box(0.0, 0.0, 15.0, 16.0, 16.0, 16.0);
 	private static final VoxelShape WEST_SHAPE = Block.box(0.0, 0.0, 0.0, 1.0, 16.0, 16.0);
+	private static final VoxelShape UP_SHAPE = Block.box(0.0, 15.0, 0.0, 16.0, 16.0, 16.0);
+	private static final VoxelShape DOWN_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 1.0, 16.0);
 
 	public GlassPanelBlock(Properties properties) {
 		super(properties);
@@ -35,8 +36,8 @@ public class GlassPanelBlock extends MultifaceBlock {
 
 	@Override
 	protected boolean isFaceSupported(Direction direction) {
-		// Only horizontal faces are supported
-		return direction.getAxis() != Direction.Axis.Y;
+		// All 6 faces are supported
+		return true;
 	}
 
 	@Override
@@ -68,6 +69,8 @@ public class GlassPanelBlock extends MultifaceBlock {
 			case EAST -> EAST_SHAPE;
 			case SOUTH -> SOUTH_SHAPE;
 			case WEST -> WEST_SHAPE;
+			case UP -> UP_SHAPE;
+			case DOWN -> DOWN_SHAPE;
 			default -> Shapes.empty();
 		};
 	}
@@ -121,6 +124,8 @@ public class GlassPanelBlock extends MultifaceBlock {
 			case SOUTH -> z >= 15.0 / 16.0;
 			case EAST -> x >= 15.0 / 16.0;
 			case WEST -> x <= 1.0 / 16.0;
+			case UP -> y >= 15.0 / 16.0;
+			case DOWN -> y <= 1.0 / 16.0;
 			default -> false;
 		};
 	}
@@ -137,8 +142,42 @@ public class GlassPanelBlock extends MultifaceBlock {
 	 * Checks if the block can survive without the given face.
 	 */
 	public static boolean canSurviveWithoutFace(BlockState state, LevelReader level, BlockPos pos, Direction face) {
-		// Check if the block can survive with the remaining faces
-		BlockState newState = removeFace(state, face);
-		return newState.canSurvive(level, pos);
+		// Glass panels are freestanding - always survives
+		return true;
+	}
+
+	@Override
+	protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+		// Glass panels are freestanding - no support block needed
+		return true;
+	}
+
+	@Override
+	protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
+		// Glass panels are freestanding - don't remove faces when adjacent blocks change
+		return state;
+	}
+
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		// Override to allow placement without support blocks
+		BlockState blockState = context.getLevel().getBlockState(context.getClickedPos());
+		BlockState blockState1 = context.getLevel().getBlockState(context.getClickedPos().relative(context.getClickedFace()));
+		Direction direction = context.getClickedFace();
+
+		if (!isFaceSupported(direction)) {
+			return null;
+		}
+
+		BlockState newState = blockState.is(this)
+			? blockState.setValue(getFaceProperty(direction), true)
+			: (BlockState) this.defaultBlockState().setValue(getFaceProperty(direction), true);
+
+		// Handle waterlogging
+		if (blockState1.getFluidState().isSourceOfType(Fluids.WATER)) {
+			newState = newState.setValue(WATERLOGGED, true);
+		}
+
+		return newState;
 	}
 }

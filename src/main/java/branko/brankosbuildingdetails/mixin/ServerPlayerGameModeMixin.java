@@ -45,7 +45,11 @@ public abstract class ServerPlayerGameModeMixin {
 		// Remove only the targeted face
 		if (GlassPanelBreakContext.breakFace(level, pos, state, face, player)) {
 			GlassPanelBreakContext.stopBreaking(player);
-			cir.setReturnValue(true);
+			// Return false so the server does NOT send a block break packet to the client.
+			// The client continues the destruction animation, but the setBlock update
+			// (UPDATE_ALL) sends a block state change packet, so the client sees the
+			// updated block (with the face removed) without a flash.
+			cir.setReturnValue(false);
 		}
 	}
 }

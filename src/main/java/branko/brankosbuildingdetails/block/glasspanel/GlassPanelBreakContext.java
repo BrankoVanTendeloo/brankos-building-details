@@ -2,6 +2,7 @@ package branko.brankosbuildingdetails.block.glasspanel;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -57,9 +58,13 @@ public class GlassPanelBreakContext {
 			return false;
 		}
 
-		// Set the new state with the face removed - use UPDATE_CLIENTS only to avoid
-		// triggering neighbor updates that cause a single-frame flash
-		level.setBlock(pos, newState, Block.UPDATE_CLIENTS);
+		// Set the new state with the face removed - UPDATE_ALL sends block update packets
+		// to nearby clients so they see the updated state without a flash
+		level.setBlock(pos, newState, Block.UPDATE_ALL);
+
+		// Play the break sound for the removed face
+		level.playSound(player, pos, state.getSoundType().getBreakSound(), SoundSource.BLOCKS, state.getSoundType().getVolume() * 0.8F, state.getSoundType().getPitch());
+
 		return true;
 	}
 }

@@ -2,7 +2,9 @@
   "required": true,
   "package": "branko.brankosbuildingdetails.client.mixin",
   "compatibilityLevel": "JAVA_25",
-  "client": [],
+  "client": [
+    "MultiPlayerGameModeMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

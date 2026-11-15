@@ -4,7 +4,9 @@
 build/
 out/
 classes/
-
+gradle/
+net/
+mc-src/
 # eclipse
 
 *.launch
@@ -38,3 +40,5 @@ hs_err_*.log
 replay_*.log
 *.hprof
 *.jfr
+
+AGENTS.md

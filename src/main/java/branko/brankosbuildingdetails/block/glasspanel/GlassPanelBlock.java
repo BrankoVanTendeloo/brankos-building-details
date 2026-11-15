@@ -153,6 +153,12 @@ public class GlassPanelBlock extends MultifaceBlock {
 	}
 
 	@Override
+	protected boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
+		// Glass panels should not be replaceable
+		return false;
+	}
+
+	@Override
 	protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
 		// Glass panels are freestanding - don't remove faces when adjacent blocks change
 		return state;

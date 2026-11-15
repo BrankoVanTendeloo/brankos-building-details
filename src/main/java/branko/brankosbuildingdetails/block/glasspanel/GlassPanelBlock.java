@@ -2,6 +2,7 @@ package branko.brankosbuildingdetails.block.glasspanel;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
@@ -160,8 +161,10 @@ public class GlassPanelBlock extends MultifaceBlock {
 
 	@Override
 	public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
-		// Allow placing glass panels on existing glass panels to add faces,
-		// but don't let other blocks replace this one
-		return super.canBeReplaced(state, context);
+		// Only allow replacement when the held item is a glass panel item
+		// This prevents other blocks from replacing the glass panel while
+		// still allowing glass panels to add faces to existing glass panels
+		return context.getItemInHand().getItem() instanceof BlockItem blockItem
+				&& blockItem.getBlock() == this;
 	}
 }

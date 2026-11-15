@@ -35,7 +35,9 @@ public class GlassPanelBreakContext {
 
 	/**
 	 * Handles breaking a single face of a glass panel.
-	 * Returns true if the face was successfully removed.
+	 * Returns true if the face was successfully removed (partial break).
+	 * Returns false if the whole block should be destroyed (last face) — lets the caller
+	 * fall through to vanilla block breaking for proper sounds and particles.
 	 */
 	public static boolean breakFace(Level level, BlockPos pos, BlockState state, Direction face, Player player) {
 		if (!GlassPanelBlock.hasFace(state, face)) {
@@ -44,20 +46,20 @@ public class GlassPanelBreakContext {
 
 		BlockState newState = GlassPanelBlock.removeFace(state, face);
 
-		// If removing this face would leave no faces, destroy the whole block
+		// If removing this face would leave no faces, let vanilla destroy the whole block
+		// to avoid doubled sounds/particles from our mixin + vanilla both running
 		if (MultifaceBlock.availableFaces(newState).isEmpty()) {
-			level.destroyBlock(pos, true, player);
-			return true;
+			return false;
 		}
 
 		// Check if the remaining state can survive
 		if (!newState.canSurvive(level, pos)) {
-			level.destroyBlock(pos, true, player);
-			return true;
+			return false;
 		}
 
-		// Set the new state with the face removed
-		level.setBlock(pos, newState, Block.UPDATE_ALL);
+		// Set the new state with the face removed - use UPDATE_CLIENTS only to avoid
+		// triggering neighbor updates that cause a single-frame flash
+		level.setBlock(pos, newState, Block.UPDATE_CLIENTS);
 		return true;
 	}
 }

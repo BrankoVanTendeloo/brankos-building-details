@@ -64,7 +64,7 @@ public class GlassPanelBlock extends MultifaceBlock {
 		return shape;
 	}
 
-	private VoxelShape getShapeForDirection(Direction direction) {
+	public static VoxelShape getShapeForDirection(Direction direction) {
 		return switch (direction) {
 			case NORTH -> NORTH_SHAPE;
 			case EAST -> EAST_SHAPE;

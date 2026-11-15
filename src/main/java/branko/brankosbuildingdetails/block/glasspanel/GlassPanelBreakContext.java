@@ -2,7 +2,10 @@ package branko.brankosbuildingdetails.block.glasspanel;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -58,12 +61,22 @@ public class GlassPanelBreakContext {
 			return false;
 		}
 
+		// Spawn block break particles so the player sees the face shatter
+		if (level instanceof ServerLevel serverLevel) {
+			serverLevel.sendParticles(
+				new BlockParticleOption(ParticleTypes.BLOCK, state),
+				pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+				20, 0.5, 0.5, 0.5, 0
+			);
+		}
+
+		// Play the break sound for the removed face - pass null to play for all nearby players
+		// (passing a player would exclude them from hearing the sound)
+		level.playSound(null, pos, state.getSoundType().getBreakSound(), SoundSource.BLOCKS, state.getSoundType().getVolume() * 0.8F, state.getSoundType().getPitch());
+
 		// Set the new state with the face removed - UPDATE_ALL sends block update packets
 		// to nearby clients so they see the updated state without a flash
 		level.setBlock(pos, newState, Block.UPDATE_ALL);
-
-		// Play the break sound for the removed face
-		level.playSound(player, pos, state.getSoundType().getBreakSound(), SoundSource.BLOCKS, state.getSoundType().getVolume() * 0.8F, state.getSoundType().getPitch());
 
 		return true;
 	}

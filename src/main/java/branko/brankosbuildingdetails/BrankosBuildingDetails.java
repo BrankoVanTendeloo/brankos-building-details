@@ -63,10 +63,9 @@ public class BrankosBuildingDetails implements ModInitializer {
 	 * relative to the block and the clicked direction.
 	 */
 	private Direction findFaceAtDirection(BlockState state, BlockPos pos, Player player, Direction clickedDirection) {
-		// For UP/DOWN clicked faces, check vertical position
+		// For UP/DOWN clicked faces, the clicked direction directly tells us which face
 		if (clickedDirection == Direction.UP || clickedDirection == Direction.DOWN) {
-			double py = player.getY() - pos.getY() - 0.5;
-			return py > 0 ? Direction.UP : Direction.DOWN;
+			return clickedDirection;
 		}
 
 		double px = player.getX() - pos.getX() - 0.5;

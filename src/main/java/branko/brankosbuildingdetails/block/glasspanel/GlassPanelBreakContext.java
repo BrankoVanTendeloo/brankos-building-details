@@ -44,11 +44,18 @@ public class GlassPanelBreakContext {
 	 * fall through to vanilla block breaking for proper sounds and particles.
 	 */
 	public static boolean breakFace(Level level, BlockPos pos, BlockState state, Direction face, Player player) {
-		if (!GlassPanelBlock.hasFace(state, face)) {
+		// Always re-read the current state from the level to avoid race conditions
+		// when breaking faces in rapid succession
+		BlockState currentState = level.getBlockState(pos);
+		if (!(currentState.getBlock() instanceof GlassPanelBlock)) {
 			return false;
 		}
 
-		BlockState newState = GlassPanelBlock.removeFace(state, face);
+		if (!GlassPanelBlock.hasFace(currentState, face)) {
+			return false;
+		}
+
+		BlockState newState = GlassPanelBlock.removeFace(currentState, face);
 
 		// If removing this face would leave no faces, let vanilla destroy the whole block
 		// to avoid doubled sounds/particles from our mixin + vanilla both running
@@ -64,7 +71,7 @@ public class GlassPanelBreakContext {
 		// Spawn block break particles so the player sees the face shatter
 		if (level instanceof ServerLevel serverLevel) {
 			serverLevel.sendParticles(
-				new BlockParticleOption(ParticleTypes.BLOCK, state),
+				new BlockParticleOption(ParticleTypes.BLOCK, currentState),
 				pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
 				20, 0.5, 0.5, 0.5, 0
 			);
@@ -72,7 +79,7 @@ public class GlassPanelBreakContext {
 
 		// Play the break sound for the removed face - pass null to play for all nearby players
 		// (passing a player would exclude them from hearing the sound)
-		level.playSound(null, pos, state.getSoundType().getBreakSound(), SoundSource.BLOCKS, state.getSoundType().getVolume() * 0.8F, state.getSoundType().getPitch());
+		level.playSound(null, pos, currentState.getSoundType().getBreakSound(), SoundSource.BLOCKS, currentState.getSoundType().getVolume() * 0.8F, currentState.getSoundType().getPitch());
 
 		// Set the new state with the face removed - UPDATE_ALL sends block update packets
 		// to nearby clients so they see the updated state without a flash

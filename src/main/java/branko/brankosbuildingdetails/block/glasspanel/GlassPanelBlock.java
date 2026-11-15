@@ -154,6 +154,42 @@ public class GlassPanelBlock extends MultifaceBlock {
 	}
 
 	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		Direction clickedFace = context.getClickedFace();
+		if (!isFaceSupported(clickedFace)) {
+			return null;
+		}
+		// When canBeReplaced returns true (clicking on an existing glass panel),
+		// the target position IS the clicked block, so the panel goes on the clicked face.
+		// When placing in a new block (air/replaceable), the target is the adjacent empty block,
+		// so the panel goes on the opposite face to attach against the clicked block face.
+		Direction faceToAdd;
+		BlockState baseState;
+		BlockState clickedState = context.getLevel().getBlockState(context.getClickedPos());
+		if (context.replacingClickedOnBlock() && clickedState.getBlock() instanceof GlassPanelBlock) {
+			faceToAdd = clickedFace;
+			baseState = clickedState;
+		} else {
+			faceToAdd = clickedFace.getOpposite();
+			baseState = defaultBlockState();
+		}
+		BlockState state = baseState.setValue(getFaceProperty(faceToAdd), true);
+		// Handle waterlogging — check the target position where the block will be placed
+		BlockPos targetPos = context.replacingClickedOnBlock() ? context.getClickedPos() : context.getClickedPos().relative(context.getClickedFace());
+		net.minecraft.world.level.material.FluidState fluidState = context.getLevel().getFluidState(targetPos);
+		if (fluidState.getType() == net.minecraft.world.level.material.Fluids.WATER) {
+			state = state.setValue(WATERLOGGED, true);
+		}
+		return state;
+	}
+
+	@Override
+	public boolean isValidStateForPlacement(BlockGetter level, BlockState state, BlockPos pos, Direction direction) {
+		// Glass panels are freestanding - no backing block check needed
+		return isFaceSupported(direction);
+	}
+
+	@Override
 	protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
 		// Glass panels are freestanding - don't remove faces when adjacent blocks change.
 		// But if waterlogged, schedule a fluid tick so water can flow out through vacant faces.

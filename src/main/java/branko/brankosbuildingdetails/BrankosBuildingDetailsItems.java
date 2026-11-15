@@ -6,7 +6,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.BlockItem;
+import branko.brankosbuildingdetails.item.GlassPanelBlockItem;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -18,7 +18,7 @@ public final class BrankosBuildingDetailsItems {
 	public static final Item GLASS_PANEL = Registry.register(
 		BuiltInRegistries.ITEM,
 		GLASS_PANEL_KEY,
-		new BlockItem(
+		new GlassPanelBlockItem(
 			BrankosBuildingDetailsBlocks.GLASS_PANEL,
 			new Item.Properties().setId(GLASS_PANEL_KEY).useBlockDescriptionPrefix()
 		)

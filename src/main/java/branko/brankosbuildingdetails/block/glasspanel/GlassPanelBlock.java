@@ -155,7 +155,11 @@ public class GlassPanelBlock extends MultifaceBlock {
 
 	@Override
 	protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
-		// Glass panels are freestanding - don't remove faces when adjacent blocks change
+		// Glass panels are freestanding - don't remove faces when adjacent blocks change.
+		// But if waterlogged, schedule a fluid tick so water can flow out through vacant faces.
+		if (state.getValue(WATERLOGGED)) {
+			tickAccess.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+		}
 		return state;
 	}
 

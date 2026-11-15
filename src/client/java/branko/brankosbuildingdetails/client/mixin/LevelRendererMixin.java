@@ -14,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 /**
- * Intercepts block outline submission for glass panels so that only the
- * targeted face is outlined, instead of all active faces combined.
+ * Intercepts block outline submission for glass panels
+ * so that only the targeted face is outlined.
  */
 @Mixin(LevelRenderer.class)
 public class LevelRendererMixin {
@@ -63,3 +63,4 @@ public class LevelRendererMixin {
 		return faceShape.isEmpty() ? state.shape() : faceShape;
 	}
 }
+

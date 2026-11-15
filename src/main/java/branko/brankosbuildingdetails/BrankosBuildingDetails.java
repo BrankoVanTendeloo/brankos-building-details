@@ -9,12 +9,15 @@ import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,26 +62,45 @@ public class BrankosBuildingDetails implements ModInitializer {
 	}
 
 	/**
-	 * Determines which glass panel face the player is targeting based on their position
-	 * relative to the block and the clicked direction.
+	 * Determines which glass panel face the player is targeting by raycasting from the player's
+	 * eye position to get the exact hit location, then checking which panel face that location
+	 * falls within.
 	 */
 	private Direction findFaceAtDirection(BlockState state, BlockPos pos, Player player, Direction clickedDirection) {
-		// For UP/DOWN clicked faces, the clicked direction directly tells us which face
-		if (clickedDirection == Direction.UP || clickedDirection == Direction.DOWN) {
-			return clickedDirection;
+		// Raycast from the player to get the exact hit location on the block
+		double reach = player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE);
+		HitResult hitResult = player.pick(reach, 0.0F, false);
+		if (!(hitResult instanceof BlockHitResult blockHit)) {
+			return null;
+		}
+		if (!blockHit.getBlockPos().equals(pos)) {
+			return null;
 		}
 
-		double px = player.getX() - pos.getX() - 0.5;
-		double pz = player.getZ() - pos.getZ() - 0.5;
+		// Check the hit location against each face's thin panel area
+		double x = blockHit.getLocation().x() - pos.getX();
+		double y = blockHit.getLocation().y() - pos.getY();
+		double z = blockHit.getLocation().z() - pos.getZ();
 
-		// Determine which face the player is closest to based on their position
-		if (Math.abs(px) > Math.abs(pz)) {
-			// Player is more to the east/west
-			return px > 0 ? Direction.EAST : Direction.WEST;
-		} else {
-			// Player is more to the north/south
-			return pz > 0 ? Direction.SOUTH : Direction.NORTH;
+		// Check each face that exists in the block state
+		for (Direction face : Direction.values()) {
+			if (!GlassPanelBlock.hasFace(state, face)) {
+				continue;
+			}
+			boolean onFace = switch (face) {
+				case NORTH -> z <= 1.0 / 16.0;
+				case SOUTH -> z >= 15.0 / 16.0;
+				case EAST -> x >= 15.0 / 16.0;
+				case WEST -> x <= 1.0 / 16.0;
+				case UP -> y >= 15.0 / 16.0;
+				case DOWN -> y <= 1.0 / 16.0;
+				default -> false;
+			};
+			if (onFace) {
+				return face;
+			}
 		}
+		return null;
 	}
 
 	public static Identifier id(String path) {

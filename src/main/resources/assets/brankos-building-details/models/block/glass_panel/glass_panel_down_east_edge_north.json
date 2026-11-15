@@ -1,0 +1,22 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": {
+      "force_translucent": true,
+      "sprite": "minecraft:block/glass"
+    },
+    "end": {
+      "force_translucent": true,
+      "sprite": "minecraft:block/glass"
+    }
+  },
+  "elements": [
+    {
+      "from": [15, 0, 1],
+      "to": [16, 1, 16],
+      "faces": {
+        "east": { "uv": [0, 0, 15, 1], "texture": "#end" }
+      }
+    }
+  ]
+}

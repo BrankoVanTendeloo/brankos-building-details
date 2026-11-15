@@ -2,27 +2,123 @@
   "multipart": [
     {
       "when": { "north": "true" },
-      "apply": { "model": "brankos-building-details:block/glass_panel_north" }
+      "apply": { "model": "brankos-building-details:block/glass_panel_north_main" }
     },
     {
       "when": { "east": "true" },
-      "apply": { "model": "brankos-building-details:block/glass_panel_north", "y": 90 }
+      "apply": { "model": "brankos-building-details:block/glass_panel_north_main", "y": 90 }
     },
     {
       "when": { "south": "true" },
-      "apply": { "model": "brankos-building-details:block/glass_panel_north", "y": 180 }
+      "apply": { "model": "brankos-building-details:block/glass_panel_north_main", "y": 180 }
     },
     {
       "when": { "west": "true" },
-      "apply": { "model": "brankos-building-details:block/glass_panel_north", "y": 270 }
+      "apply": { "model": "brankos-building-details:block/glass_panel_north_main", "y": 270 }
     },
     {
       "when": { "up": "true" },
-      "apply": { "model": "brankos-building-details:block/glass_panel_up" }
+      "apply": { "model": "brankos-building-details:block/glass_panel_up_main" }
     },
     {
       "when": { "down": "true" },
-      "apply": { "model": "brankos-building-details:block/glass_panel_down" }
+      "apply": { "model": "brankos-building-details:block/glass_panel_down_main" }
+    },
+    {
+      "when": { "north": "true", "up": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_north_up_edge" }
+    },
+    {
+      "when": { "east": "true", "up": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_north_up_edge", "y": 90 }
+    },
+    {
+      "when": { "south": "true", "up": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_north_up_edge", "y": 180 }
+    },
+    {
+      "when": { "west": "true", "up": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_north_up_edge", "y": 270 }
+    },
+    {
+      "when": { "north": "true", "down": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_north_down_edge" }
+    },
+    {
+      "when": { "east": "true", "down": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_north_down_edge", "y": 90 }
+    },
+    {
+      "when": { "south": "true", "down": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_north_down_edge", "y": 180 }
+    },
+    {
+      "when": { "west": "true", "down": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_north_down_edge", "y": 270 }
+    },
+    {
+      "when": { "north": "true", "west": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_north_west_edge" }
+    },
+    {
+      "when": { "east": "true", "north": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_north_west_edge", "y": 90 }
+    },
+    {
+      "when": { "south": "true", "east": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_north_west_edge", "y": 180 }
+    },
+    {
+      "when": { "west": "true", "south": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_north_west_edge", "y": 270 }
+    },
+    {
+      "when": { "north": "true", "east": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_north_east_edge" }
+    },
+    {
+      "when": { "east": "true", "south": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_north_east_edge", "y": 90 }
+    },
+    {
+      "when": { "south": "true", "west": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_north_east_edge", "y": 180 }
+    },
+    {
+      "when": { "west": "true", "north": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_north_east_edge", "y": 270 }
+    },
+    {
+      "when": { "up": "true", "north": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_up_north_edge" }
+    },
+    {
+      "when": { "up": "true", "south": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_up_south_edge" }
+    },
+    {
+      "when": { "up": "true", "east": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_up_east_edge" }
+    },
+    {
+      "when": { "up": "true", "west": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_up_west_edge" }
+    },
+    {
+      "when": { "down": "true", "north": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_down_north_edge" }
+    },
+    {
+      "when": { "down": "true", "south": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_down_south_edge" }
+    },
+    {
+      "when": { "down": "true", "east": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_down_east_edge" }
+    },
+    {
+      "when": { "down": "true", "west": "false" },
+      "apply": { "model": "brankos-building-details:block/glass_panel_down_west_edge" }
     }
   ]
 }

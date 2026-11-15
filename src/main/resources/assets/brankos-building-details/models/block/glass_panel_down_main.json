@@ -8,18 +8,13 @@
     "glass": {
       "force_translucent": true,
       "sprite": "minecraft:block/glass"
-    },
-    "end": "minecraft:block/glass"
+    }
   },
   "elements": [
     {
-      "from": [0, 15, 0],
-      "to": [16, 16, 16],
+      "from": [0, 0, 0],
+      "to": [16, 1, 16],
       "faces": {
-        "north": { "uv": [0, 0, 16, 1], "texture": "#end" },
-        "east": { "uv": [0, 0, 16, 1], "texture": "#end" },
-        "south": { "uv": [0, 0, 16, 1], "texture": "#end" },
-        "west": { "uv": [0, 0, 16, 1], "texture": "#end" },
         "up": { "uv": [0, 0, 16, 16], "texture": "#glass" },
         "down": { "uv": [0, 0, 16, 16], "texture": "#glass" }
       }

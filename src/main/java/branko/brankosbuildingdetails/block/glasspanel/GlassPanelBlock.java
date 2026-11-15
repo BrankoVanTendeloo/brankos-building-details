@@ -153,12 +153,6 @@ public class GlassPanelBlock extends MultifaceBlock {
 	}
 
 	@Override
-	protected boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
-		// Glass panels should not be replaceable
-		return false;
-	}
-
-	@Override
 	protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
 		// Glass panels are freestanding - don't remove faces when adjacent blocks change
 		return state;
@@ -175,9 +169,37 @@ public class GlassPanelBlock extends MultifaceBlock {
 			return null;
 		}
 
+		// Determine which face to add
+		Direction faceToAdd = direction;
+		if (blockState.getBlock() instanceof GlassPanelBlock) {
+			// Clicking on an existing glass panel — check if we hit an existing face
+			double x = context.getClickLocation().x() - context.getClickedPos().getX();
+			double y = context.getClickLocation().y() - context.getClickedPos().getY();
+			double z = context.getClickLocation().z() - context.getClickedPos().getZ();
+
+			Set<Direction> faces = availableFaces(blockState);
+			for (Direction face : faces) {
+				boolean onFace = switch (face) {
+					case NORTH -> z <= 1.0 / 16.0;
+					case SOUTH -> z >= 15.0 / 16.0;
+					case EAST -> x >= 15.0 / 16.0;
+					case WEST -> x <= 1.0 / 16.0;
+					case UP -> y >= 15.0 / 16.0;
+					case DOWN -> y <= 1.0 / 16.0;
+					default -> false;
+				};
+				if (onFace) {
+					// Clicked the inside of an existing face — add the opposite face
+					faceToAdd = face.getOpposite();
+					break;
+				}
+			}
+			// If no face was hit, we clicked the outside of the panel — use the clicked face
+		}
+
 		BlockState newState = blockState.is(this)
-			? blockState.setValue(getFaceProperty(direction), true)
-			: (BlockState) this.defaultBlockState().setValue(getFaceProperty(direction), true);
+			? blockState.setValue(getFaceProperty(faceToAdd), true)
+			: (BlockState) this.defaultBlockState().setValue(getFaceProperty(faceToAdd), true);
 
 		// Handle waterlogging
 		if (blockState1.getFluidState().isSourceOfType(Fluids.WATER)) {

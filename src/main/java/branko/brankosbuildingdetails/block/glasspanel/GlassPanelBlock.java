@@ -88,7 +88,11 @@ public class GlassPanelBlock extends MultifaceBlock {
 
 	@Override
 	protected boolean isPathfindable(BlockState state, PathComputationType type) {
-		return type == PathComputationType.WATER && state.getFluidState().isSourceOfType(Fluids.WATER);
+		return switch (type) {
+			case LAND -> true;
+			case WATER -> state.getFluidState().isSourceOfType(Fluids.WATER);
+			default -> false;
+		};
 	}
 
 	@Override

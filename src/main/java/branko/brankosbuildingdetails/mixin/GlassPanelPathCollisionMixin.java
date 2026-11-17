@@ -40,6 +40,17 @@ public abstract class GlassPanelPathCollisionMixin {
             BlockPos.MutableBlockPos reusablePos
     );
 
+    @Shadow
+    protected abstract Node findAcceptedNode(
+            int x,
+            int y,
+            int z,
+            int jumpSize,
+            double nodeHeight,
+            Direction travelDirection,
+            PathType blockPathTypeCurrent
+    );
+
     @Inject(
             method = "getNeighbors",
             at = @At("RETURN"),
@@ -82,10 +93,13 @@ public abstract class GlassPanelPathCollisionMixin {
                 continue;
             }
 
-            if (brankosBuildingDetails$collidesWithGlassPanel(
+
+            boolean collides = brankosBuildingDetails$collidesWithGlassPanel(
                     current,
                     candidate
-            )) {
+            );
+
+            if (collides) {
                 int dx = candidate.x - current.x;
                 int dz = candidate.z - current.z;
 
@@ -105,19 +119,32 @@ public abstract class GlassPanelPathCollisionMixin {
                     direction = Direction.NORTH;
                 }
 
-
-                Node jumpNode = this.tryJumpOn(
+                Node aboveNode = this.findAcceptedNode(
                         candidate.x,
-                        candidate.y,
+                        candidate.y + 1,
                         candidate.z,
-                        jumpSize,
+                        jumpSize - 1,
                         nodeHeight,
                         direction,
+                        blockPathTypeCurrent
+                );
+
+
+                Node jumpNode = this.tryJumpOn(
+                        candidate.x, candidate.y, candidate.z,
+                        jumpSize, nodeHeight, direction,
                         blockPathTypeCurrent,
                         new BlockPos.MutableBlockPos()
                 );
 
-                if (jumpNode == null) {
+                if (jumpNode == null) continue;
+
+// A jump is only valid if it actually changes the vertical position.
+                if (jumpNode.y <= candidate.y) continue;
+
+// Also verify that the mob can travel to the resulting node
+// without intersecting a glass panel.
+                if (brankosBuildingDetails$collidesWithGlassPanel(current, jumpNode)) {
                     continue;
                 }
 
@@ -194,7 +221,6 @@ public abstract class GlassPanelPathCollisionMixin {
                         if (!(state.getBlock() instanceof GlassPanelBlock)) {
                             continue;
                         }
-                        System.out.println("[BBD] Checking panel at " + pos);
 
                         VoxelShape shape = state.getCollisionShape(level, pos);
 
@@ -206,7 +232,6 @@ public abstract class GlassPanelPathCollisionMixin {
                             );
 
                             if (mobBox.intersects(worldShape)) {
-                                System.out.println("[BBD] PANEL COLLISION between " + from.x + " " + from.y + " " + from.z + " and " + to.x + " " + to.y + " " + to.z);
                                 return true;
                             }
                         }

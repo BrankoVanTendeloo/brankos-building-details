@@ -1,9 +1,13 @@
 {
   "required": true,
   "package": "branko.brankosbuildingdetails.mixin",
+  "plugin": "branko.brankosbuildingdetails.mixin.DebugMixinPlugin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
-    "ServerPlayerGameModeMixin"
+    "ServerPlayerGameModeMixin",
+    "MoveControlMixin",
+    "GlassPanelPathCollisionMixin",
+    "NodeEvaluatorAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

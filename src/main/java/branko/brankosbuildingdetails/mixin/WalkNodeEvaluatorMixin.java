@@ -1,9 +1,9 @@
-
 package branko.brankosbuildingdetails.mixin;
 
 import branko.brankosbuildingdetails.block.glasspanel.GlassPanelBlock;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
@@ -30,7 +30,11 @@ public abstract class WalkNodeEvaluatorMixin {
         BlockState state = level.getBlockState(pos);
 
         if (state.getBlock() instanceof GlassPanelBlock) {
-            cir.setReturnValue(PathType.WALKABLE);
+            PathType pathType = GlassPanelBlock.hasFace(state, Direction.UP)
+                    ? PathType.WALKABLE
+                    : PathType.OPEN;
+
+            cir.setReturnValue(pathType);
         }
     }
 }

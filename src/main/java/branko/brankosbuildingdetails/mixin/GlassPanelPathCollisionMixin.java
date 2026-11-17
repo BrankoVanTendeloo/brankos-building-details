@@ -194,6 +194,7 @@ public abstract class GlassPanelPathCollisionMixin {
                         if (!(state.getBlock() instanceof GlassPanelBlock)) {
                             continue;
                         }
+                        System.out.println("[BBD] Checking panel at " + pos);
 
                         VoxelShape shape = state.getCollisionShape(level, pos);
 
@@ -205,6 +206,7 @@ public abstract class GlassPanelPathCollisionMixin {
                             );
 
                             if (mobBox.intersects(worldShape)) {
+                                System.out.println("[BBD] PANEL COLLISION between " + from.x + " " + from.y + " " + from.z + " and " + to.x + " " + to.y + " " + to.z);
                                 return true;
                             }
                         }

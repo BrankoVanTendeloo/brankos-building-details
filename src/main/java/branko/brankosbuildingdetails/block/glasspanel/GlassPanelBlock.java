@@ -35,6 +35,10 @@ public class GlassPanelBlock extends MultifaceBlock {
 		super(properties);
 	}
 
+	public static boolean hasFace(BlockState state, Direction face) {
+		return state.getValue(getFaceProperty(face));
+	}
+
 	@Override
 	protected boolean isFaceSupported(Direction direction) {
 		// All 6 faces are supported

@@ -17,8 +17,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(WalkNodeEvaluator.class)
 public abstract class WalkNodeEvaluatorMixin {
 
-    private static int brankosBuildingDetails$debugCount = 0;
-
     @Inject(
             method = "getPathTypeFromState",
             at = @At("HEAD"),
@@ -32,7 +30,7 @@ public abstract class WalkNodeEvaluatorMixin {
         BlockState state = level.getBlockState(pos);
 
         if (state.getBlock() instanceof GlassPanelBlock) {
-            System.out.println("[BBD DEBUG] Panel detected; forcing WALKABLE at " + pos);
+            cir.setReturnValue(PathType.WALKABLE);
         }
     }
 }

@@ -3,14 +3,16 @@ package branko.brankosbuildingdetails.mixin;
 
 import branko.brankosbuildingdetails.block.glasspanel.GlassPanelBlock;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Node;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,6 +22,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(WalkNodeEvaluator.class)
 public abstract class GlassPanelPathCollisionMixin {
 
+    @Shadow
+    protected abstract PathType getCachedPathType(int x, int y, int z);
+
+    @Shadow
+    protected abstract double getFloorLevel(BlockPos pos);
+
+    @Shadow
+    protected abstract Node tryJumpOn(
+            int x,
+            int y,
+            int z,
+            int jumpSize,
+            double nodeHeight,
+            Direction travelDirection,
+            PathType blockPathTypeCurrent,
+            BlockPos.MutableBlockPos reusablePos
+    );
 
     @Inject(
             method = "getNeighbors",
@@ -31,18 +50,78 @@ public abstract class GlassPanelPathCollisionMixin {
             Node current,
             CallbackInfoReturnable<Integer> cir
     ) {
+        Mob mob = ((NodeEvaluatorAccessor) this)
+                .brankosBuildingDetails$getMob();
+
+        PathType blockPathTypeCurrent =
+                this.getCachedPathType(current.x, current.y, current.z);
+
+        PathType blockPathTypeAbove =
+                this.getCachedPathType(current.x, current.y + 1, current.z);
+
+        int jumpSize = 0;
+
+        if (mob.getPathfindingMalus(blockPathTypeAbove) >= 0.0F
+                && blockPathTypeCurrent != PathType.STICKY_HONEY) {
+            jumpSize = Mth.floor(
+                    Math.max(1.0F, mob.maxUpStep())
+            );
+        }
+
+        double nodeHeight = this.getFloorLevel(
+                new BlockPos(current.x, current.y, current.z)
+        );
+
         int count = cir.getReturnValueI();
         int writeIndex = 0;
 
-        for (int readIndex = 0; readIndex < count; readIndex++) {
-            Node candidate = neighbors[readIndex];
+        for (int i = 0; i < count; i++) {
+            Node candidate = neighbors[i];
 
-            if (candidate != null
-                    && brankosBuildingDetails$collidesWithGlassPanel(
+            if (candidate == null) {
+                continue;
+            }
+
+            if (brankosBuildingDetails$collidesWithGlassPanel(
                     current,
                     candidate
             )) {
-                continue;
+                int dx = candidate.x - current.x;
+                int dz = candidate.z - current.z;
+
+                if (Math.abs(dx) + Math.abs(dz) != 1 || jumpSize <= 0) {
+                    continue;
+                }
+
+                Direction direction;
+
+                if (dx > 0) {
+                    direction = Direction.EAST;
+                } else if (dx < 0) {
+                    direction = Direction.WEST;
+                } else if (dz > 0) {
+                    direction = Direction.SOUTH;
+                } else {
+                    direction = Direction.NORTH;
+                }
+
+
+                Node jumpNode = this.tryJumpOn(
+                        candidate.x,
+                        candidate.y,
+                        candidate.z,
+                        jumpSize,
+                        nodeHeight,
+                        direction,
+                        blockPathTypeCurrent,
+                        new BlockPos.MutableBlockPos()
+                );
+
+                if (jumpNode == null) {
+                    continue;
+                }
+
+                candidate = jumpNode;
             }
 
             neighbors[writeIndex++] = candidate;
@@ -55,7 +134,6 @@ public abstract class GlassPanelPathCollisionMixin {
             Node from,
             Node to
     ) {
-        // Leave vertical movement alone so mobs can still jump.
         if (from.y != to.y) {
             return false;
         }
@@ -78,8 +156,6 @@ public abstract class GlassPanelPathCollisionMixin {
         double dz = endZ - startZ;
 
         double distance = Math.sqrt(dx * dx + dz * dz);
-
-        // Small increments are important because the panels are thin.
         int steps = Math.max(1, (int) Math.ceil(distance * 32.0));
 
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();

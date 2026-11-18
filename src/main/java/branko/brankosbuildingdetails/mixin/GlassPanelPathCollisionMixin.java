@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.animal.chicken.Chicken;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Node;
@@ -27,6 +28,27 @@ public abstract class GlassPanelPathCollisionMixin {
 
     @Shadow
     protected abstract double getFloorLevel(BlockPos pos);
+
+    @Inject(
+            method = "getFloorLevel",
+            at = @At("RETURN"),
+            cancellable = true
+    )
+    private void brankosBuildingDetails$correctGlassPanelFloor(
+            BlockPos pos,
+            CallbackInfoReturnable<Double> cir
+    ) {
+        Mob mob = ((NodeEvaluatorAccessor) this)
+                .brankosBuildingDetails$getMob();
+
+        BlockState state = mob.level().getBlockState(pos);
+
+        if (state.getBlock() instanceof GlassPanelBlock
+                && GlassPanelBlock.hasFace(state, Direction.DOWN)) {
+
+            cir.setReturnValue(pos.getY() + 1.0 / 16.0);
+        }
+    }
 
     @Shadow
     protected abstract Node tryJumpOn(
@@ -168,6 +190,41 @@ public abstract class GlassPanelPathCollisionMixin {
         Mob mob = ((NodeEvaluatorAccessor) this)
                 .brankosBuildingDetails$getMob();
 
+        double startY = this.getFloorLevel(
+                new BlockPos(from.x, from.y, from.z)
+        );
+        double endY = this.getFloorLevel(
+                new BlockPos(to.x, to.y, to.z)
+        );
+
+        if (mob instanceof Chicken) {
+            System.out.println(
+                    "PATH NODE: " + from.x + ", " + from.y + ", " + from.z
+                            + " floor=" + startY
+                            + " block=" + mob.level().getBlockState(
+                            new BlockPos(from.x, from.y, from.z)
+                    ).getBlock()
+            );
+
+            System.out.println(
+                    "NEXT NODE: " + to.x + ", " + to.y + ", " + to.z
+                            + " floor=" + endY
+            );
+
+            System.out.println(
+                    "MOB POSITION: " + mob.getX() + ", "
+                            + mob.getY() + ", " + mob.getZ()
+                            + " | boundingBoxMinY=" + mob.getBoundingBox().minY
+                            + " | blockBelow=" + mob.level().getBlockState(
+                            BlockPos.containing(
+                                    mob.getX(),
+                                    mob.getY() - 0.01,
+                                    mob.getZ()
+                            )
+                    )
+            );
+        }
+
         BlockGetter level = mob.level();
 
         double halfWidth = mob.getBbWidth() / 2.0;
@@ -193,12 +250,14 @@ public abstract class GlassPanelPathCollisionMixin {
             double x = startX + dx * progress;
             double z = startZ + dz * progress;
 
+            double feetY = Math.max(startY, endY);
+
             AABB mobBox = new AABB(
                     x - halfWidth,
-                    from.y,
+                    feetY,
                     z - halfWidth,
                     x + halfWidth,
-                    from.y + height,
+                    feetY + height,
                     z + halfWidth
             );
 

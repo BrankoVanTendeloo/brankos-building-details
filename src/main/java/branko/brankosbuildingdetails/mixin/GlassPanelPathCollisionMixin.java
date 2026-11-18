@@ -2,6 +2,7 @@
 package branko.brankosbuildingdetails.mixin;
 
 import branko.brankosbuildingdetails.block.glasspanel.GlassPanelBlock;
+import branko.brankosbuildingdetails.util.GlassPanelJumpHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -97,7 +98,7 @@ public abstract class GlassPanelPathCollisionMixin {
         if (mob.getPathfindingMalus(blockPathTypeAbove) >= 0.0F
                 && blockPathTypeCurrent != PathType.STICKY_HONEY) {
             jumpSize = Mth.floor(
-                    Math.max(1.0F, mob.maxUpStep())
+                    Math.max(1.125F, mob.maxUpStep())
             );
         }
 
@@ -122,6 +123,44 @@ public abstract class GlassPanelPathCollisionMixin {
             );
 
             if (collides) {
+                boolean crossesVerticalPanel =
+                        GlassPanelJumpHelper.crossesVerticalPanel(
+                                mob,
+                                current.x + 0.5,
+                                nodeHeight,
+                                current.z + 0.5,
+                                candidate.x + 0.5,
+                                this.getFloorLevel(
+                                        new BlockPos(candidate.x, candidate.y, candidate.z)
+                                ),
+                                candidate.z + 0.5
+                        );
+
+                if (crossesVerticalPanel) {
+                    double candidateFloor = this.getFloorLevel(
+                            new BlockPos(candidate.x, candidate.y, candidate.z)
+                    );
+
+                    boolean canJump = GlassPanelJumpHelper.canJumpOver(
+                            mob,
+                            current.x + 0.5, nodeHeight, current.z + 0.5,
+                            candidate.x + 0.5, candidateFloor, candidate.z + 0.5
+                    );
+
+                    if (mob instanceof Chicken) {
+                        System.out.println(
+                                "[GlassPanel] Chicken crossing detected. Can jump: "
+                                        + canJump
+                        );
+                    }
+
+                    if (canJump) {
+                        neighbors[writeIndex++] = candidate;
+                    }
+
+                    continue;
+                }
+
                 int dx = candidate.x - current.x;
                 int dz = candidate.z - current.z;
 
@@ -161,17 +200,19 @@ public abstract class GlassPanelPathCollisionMixin {
 
                 if (jumpNode == null) continue;
 
-// A jump is only valid if it actually changes the vertical position.
+                // A jump is only valid if it actually changes the vertical position.
                 if (jumpNode.y <= candidate.y) continue;
 
-// Also verify that the mob can travel to the resulting node
-// without intersecting a glass panel.
+                // Also verify that the mob can travel to the resulting node
+                // without intersecting a glass panel.
                 if (brankosBuildingDetails$collidesWithGlassPanel(current, jumpNode)) {
                     continue;
                 }
 
                 candidate = jumpNode;
             }
+
+
 
             neighbors[writeIndex++] = candidate;
         }
@@ -196,34 +237,6 @@ public abstract class GlassPanelPathCollisionMixin {
         double endY = this.getFloorLevel(
                 new BlockPos(to.x, to.y, to.z)
         );
-
-        if (mob instanceof Chicken) {
-            System.out.println(
-                    "PATH NODE: " + from.x + ", " + from.y + ", " + from.z
-                            + " floor=" + startY
-                            + " block=" + mob.level().getBlockState(
-                            new BlockPos(from.x, from.y, from.z)
-                    ).getBlock()
-            );
-
-            System.out.println(
-                    "NEXT NODE: " + to.x + ", " + to.y + ", " + to.z
-                            + " floor=" + endY
-            );
-
-            System.out.println(
-                    "MOB POSITION: " + mob.getX() + ", "
-                            + mob.getY() + ", " + mob.getZ()
-                            + " | boundingBoxMinY=" + mob.getBoundingBox().minY
-                            + " | blockBelow=" + mob.level().getBlockState(
-                            BlockPos.containing(
-                                    mob.getX(),
-                                    mob.getY() - 0.01,
-                                    mob.getZ()
-                            )
-                    )
-            );
-        }
 
         BlockGetter level = mob.level();
 

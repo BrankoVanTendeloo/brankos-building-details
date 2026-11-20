@@ -1,3 +1,11 @@
 {
+  "block.brankos-building-details.sandstone_bricks": "Sandstone Bricks",
+  "block.brankos-building-details.sandstone_brick_stairs": "Sandstone Brick Stairs",
+  "block.brankos-building-details.sandstone_brick_slab": "Sandstone Brick Slab",
+  "block.brankos-building-details.sandstone_brick_wall": "Sandstone Brick Wall",
+  "block.brankos-building-details.red_sandstone_bricks": "Red Sandstone Bricks",
+  "block.brankos-building-details.red_sandstone_brick_stairs": "Red Sandstone Brick Stairs",
+  "block.brankos-building-details.red_sandstone_brick_slab": "Red Sandstone Brick Slab",
+  "block.brankos-building-details.red_sandstone_brick_wall": "Red Sandstone Brick Wall",
   "block.brankos-building-details.glass_panel": "Glass Panel"
 }

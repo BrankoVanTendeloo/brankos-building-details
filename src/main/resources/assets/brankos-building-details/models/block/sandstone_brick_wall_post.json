@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/wall_post",
+  "textures": {
+    "wall": "brankos-building-details:block/sandstone_bricks"
+  }
+}

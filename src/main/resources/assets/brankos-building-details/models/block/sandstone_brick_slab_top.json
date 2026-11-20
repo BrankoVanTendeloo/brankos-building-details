@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "brankos-building-details:block/sandstone_bricks",
+    "top": "brankos-building-details:block/sandstone_bricks",
+    "side": "brankos-building-details:block/sandstone_bricks"
+  }
+}

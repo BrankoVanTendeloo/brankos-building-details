@@ -7,6 +7,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import branko.brankosbuildingdetails.item.GlassPanelBlockItem;
+import branko.brankosbuildingdetails.item.GlowSpectralItemFrameItem;
+import branko.brankosbuildingdetails.item.SpectralItemFrameItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
@@ -122,6 +124,30 @@ public final class BrankosBuildingDetailsItems {
 		)
 	);
 
+	private static final ResourceKey<Item> SPECTRAL_ITEM_FRAME_KEY =
+		ResourceKey.create(Registries.ITEM, BrankosBuildingDetails.id("spectral_item_frame"));
+
+	public static final Item SPECTRAL_ITEM_FRAME = Registry.register(
+		BuiltInRegistries.ITEM,
+		SPECTRAL_ITEM_FRAME_KEY,
+		new SpectralItemFrameItem(
+			BrankosBuildingDetails.SPECTRAL_ITEM_FRAME_TYPE,
+			new Item.Properties().setId(SPECTRAL_ITEM_FRAME_KEY)
+		)
+	);
+
+	private static final ResourceKey<Item> GLOW_SPECTRAL_ITEM_FRAME_KEY =
+		ResourceKey.create(Registries.ITEM, BrankosBuildingDetails.id("glow_spectral_item_frame"));
+
+	public static final Item GLOW_SPECTRAL_ITEM_FRAME = Registry.register(
+		BuiltInRegistries.ITEM,
+		GLOW_SPECTRAL_ITEM_FRAME_KEY,
+		new GlowSpectralItemFrameItem(
+			BrankosBuildingDetails.GLOW_SPECTRAL_ITEM_FRAME_TYPE,
+			new Item.Properties().setId(GLOW_SPECTRAL_ITEM_FRAME_KEY)
+		)
+	);
+
 	private BrankosBuildingDetailsItems() {
 	}
 
@@ -144,5 +170,9 @@ public final class BrankosBuildingDetailsItems {
 			.register(output -> output.insertAfter(RED_SANDSTONE_BRICK_SLAB, RED_SANDSTONE_BRICK_WALL));
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.COLORED_BLOCKS)
 			.register(output -> output.insertAfter(Items.STAINED_GLASS_PANE.pink(), GLASS_PANEL));
+		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS)
+			.register(output -> output.insertAfter(Items.ITEM_FRAME, SPECTRAL_ITEM_FRAME));
+		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS)
+			.register(output -> output.insertAfter(Items.GLOW_ITEM_FRAME, GLOW_SPECTRAL_ITEM_FRAME));
 	}
 }

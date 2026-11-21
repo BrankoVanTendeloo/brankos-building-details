@@ -1,0 +1,5 @@
+{
+    "variants": {
+        "": { "model": "brankos-building-details:block/glow_spectral_item_frame_block" }
+    }
+}

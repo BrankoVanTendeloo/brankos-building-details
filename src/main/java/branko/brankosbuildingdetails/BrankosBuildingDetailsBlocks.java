@@ -162,6 +162,39 @@ public final class BrankosBuildingDetailsBlocks {
 		)
 	);
 
+	// Dummy blocks used only for item frame model resolution (never placed in the world)
+	private static final ResourceKey<Block> SPECTRAL_ITEM_FRAME_BLOCK_KEY =
+		ResourceKey.create(Registries.BLOCK, BrankosBuildingDetails.id("spectral_item_frame_block"));
+
+	public static final Block SPECTRAL_ITEM_FRAME_BLOCK = Registry.register(
+		BuiltInRegistries.BLOCK,
+		SPECTRAL_ITEM_FRAME_BLOCK_KEY,
+		new Block(
+			BlockBehaviour.Properties.of()
+				.setId(SPECTRAL_ITEM_FRAME_BLOCK_KEY)
+				.noLootTable()
+				.strength(-1F, 3600000F)
+				.instabreak()
+				.sound(SoundType.WOOD)
+		)
+	);
+
+	private static final ResourceKey<Block> GLOW_SPECTRAL_ITEM_FRAME_BLOCK_KEY =
+		ResourceKey.create(Registries.BLOCK, BrankosBuildingDetails.id("glow_spectral_item_frame_block"));
+
+	public static final Block GLOW_SPECTRAL_ITEM_FRAME_BLOCK = Registry.register(
+		BuiltInRegistries.BLOCK,
+		GLOW_SPECTRAL_ITEM_FRAME_BLOCK_KEY,
+		new Block(
+			BlockBehaviour.Properties.of()
+				.setId(GLOW_SPECTRAL_ITEM_FRAME_BLOCK_KEY)
+				.noLootTable()
+				.strength(-1F, 3600000F)
+				.instabreak()
+				.sound(SoundType.WOOD)
+		)
+	);
+
 	private BrankosBuildingDetailsBlocks() {
 	}
 

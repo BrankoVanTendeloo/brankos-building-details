@@ -2,15 +2,25 @@ package branko.brankosbuildingdetails;
 
 import branko.brankosbuildingdetails.block.glasspanel.GlassPanelBlock;
 import branko.brankosbuildingdetails.block.glasspanel.GlassPanelBreakContext;
+import branko.brankosbuildingdetails.entity.GlowSpectralItemFrameEntity;
+import branko.brankosbuildingdetails.entity.SpectralItemFrameEntity;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.resources.Identifier;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -27,9 +37,39 @@ public class BrankosBuildingDetails implements ModInitializer {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+	public static EntityType<SpectralItemFrameEntity> SPECTRAL_ITEM_FRAME_TYPE;
+	public static EntityType<GlowSpectralItemFrameEntity> GLOW_SPECTRAL_ITEM_FRAME_TYPE;
+
+	public static final SimpleParticleType SPECTRAL_PARTICLE = FabricParticleTypes.simple(true);
+
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Hello Fabric world!");
+
+		ResourceKey<EntityType<?>> spectralKey = ResourceKey.create(Registries.ENTITY_TYPE, id("spectral_item_frame"));
+		SPECTRAL_ITEM_FRAME_TYPE = Registry.register(
+			BuiltInRegistries.ENTITY_TYPE,
+			spectralKey,
+			EntityType.Builder.<SpectralItemFrameEntity>of(SpectralItemFrameEntity::new, MobCategory.MISC)
+				.noLootTable()
+				.sized(0.5F, 0.5F)
+				.eyeHeight(0.0F)
+				.build(spectralKey)
+		);
+
+		ResourceKey<EntityType<?>> glowSpectralKey = ResourceKey.create(Registries.ENTITY_TYPE, id("glow_spectral_item_frame"));
+		GLOW_SPECTRAL_ITEM_FRAME_TYPE = Registry.register(
+			BuiltInRegistries.ENTITY_TYPE,
+			glowSpectralKey,
+			EntityType.Builder.<GlowSpectralItemFrameEntity>of(GlowSpectralItemFrameEntity::new, MobCategory.MISC)
+				.noLootTable()
+				.sized(0.5F, 0.5F)
+				.eyeHeight(0.0F)
+				.build(glowSpectralKey)
+		);
+
+		Registry.register(BuiltInRegistries.PARTICLE_TYPE, id("spectral"), SPECTRAL_PARTICLE);
+
 		BrankosBuildingDetailsBlocks.initialize();
 		BrankosBuildingDetailsItems.initialize();
 

@@ -1,8 +1,14 @@
 package branko.brankosbuildingdetails.client;
 
+import branko.brankosbuildingdetails.BrankosBuildingDetails;
 import branko.brankosbuildingdetails.block.glasspanel.GlassPanelBlock;
+import branko.brankosbuildingdetails.client.particle.SpectralParticleProvider;
+import branko.brankosbuildingdetails.client.renderer.GlowSpectralItemFrameRenderer;
+import branko.brankosbuildingdetails.client.renderer.SpectralItemFrameRenderer;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 
 import net.minecraft.core.BlockPos;
@@ -21,6 +27,13 @@ public class BrankosBuildingDetailsClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+		// Register entity renderers for spectral item frames
+		EntityRendererRegistry.register(BrankosBuildingDetails.SPECTRAL_ITEM_FRAME_TYPE, SpectralItemFrameRenderer::new);
+		EntityRendererRegistry.register(BrankosBuildingDetails.GLOW_SPECTRAL_ITEM_FRAME_TYPE, GlowSpectralItemFrameRenderer::new);
+
+		// Register spectral particle provider with custom texture
+		ParticleProviderRegistry.getInstance().register(BrankosBuildingDetails.SPECTRAL_PARTICLE, SpectralParticleProvider::new);
+
 		// Track which glass panel face is being attacked on the client side
 		AttackBlockCallback.EVENT.register((player, level, hand, pos, direction) -> {
 			BlockState state = level.getBlockState(pos);

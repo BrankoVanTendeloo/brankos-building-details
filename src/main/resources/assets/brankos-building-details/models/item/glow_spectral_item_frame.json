@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "brankos-building-details:item/glow_spectral_item_frame"
+  }
+}

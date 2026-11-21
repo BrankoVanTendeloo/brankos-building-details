@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:stonecutting",
+  "category": "building",
+  "ingredient": "brankos-building-details:sandstone_bricks",
+  "result": {
+    "count": 1,
+    "id": "brankos-building-details:sandstone_brick_slab"
+  }
+}

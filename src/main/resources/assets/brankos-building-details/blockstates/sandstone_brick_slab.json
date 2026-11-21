@@ -1,13 +1,13 @@
 {
   "variants": {
     "type=bottom": {
-      "model": "brankos-building-details:block/sandstone_brick_slab"
+      "model": "brankos-building-details:block/sandstone_bricks/slab"
     },
     "type=top": {
-      "model": "brankos-building-details:block/sandstone_brick_slab_top"
+      "model": "brankos-building-details:block/sandstone_bricks/slab_top"
     },
     "type=double": {
-      "model": "brankos-building-details:block/sandstone_bricks"
+      "model": "brankos-building-details:block/sandstone_bricks/bricks"
     }
   }
 }

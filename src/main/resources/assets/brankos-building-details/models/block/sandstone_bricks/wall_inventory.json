@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/wall_inventory",
+  "textures": {
+    "wall": "brankos-building-details:block/sandstone_bricks"
+  }
+}

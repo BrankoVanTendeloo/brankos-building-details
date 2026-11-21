@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "brankos-building-details:item/sandstone_bricks"
+    "model": "brankos-building-details:item/sandstone_bricks/bricks"
   }
 }

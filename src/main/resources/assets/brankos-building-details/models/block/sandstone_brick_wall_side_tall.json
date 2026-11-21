@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/wall_side_tall",
-  "textures": {
-    "wall": "brankos-building-details:block/sandstone_bricks"
-  }
-}

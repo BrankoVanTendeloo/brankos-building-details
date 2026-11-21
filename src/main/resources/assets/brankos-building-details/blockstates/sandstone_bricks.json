@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "brankos-building-details:block/sandstone_bricks"
+      "model": "brankos-building-details:block/sandstone_bricks/bricks"
     }
   }
 }

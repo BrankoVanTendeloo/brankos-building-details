@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "brankos-building-details:item/red_sandstone_brick_wall"
+    "model": "brankos-building-details:block/red_sandstone_bricks/wall_inventory"
   }
 }

@@ -2,6 +2,8 @@ package branko.brankosbuildingdetails.client;
 
 import branko.brankosbuildingdetails.BrankosBuildingDetails;
 import branko.brankosbuildingdetails.block.glasspanel.GlassPanelBlock;
+import branko.brankosbuildingdetails.client.particle.FallingDirtPieceLandParticleProvider;
+import branko.brankosbuildingdetails.client.particle.FallingDirtPieceParticleProvider;
 import branko.brankosbuildingdetails.client.particle.SpectralParticleProvider;
 import branko.brankosbuildingdetails.client.renderer.GlowSpectralItemFrameRenderer;
 import branko.brankosbuildingdetails.client.renderer.SpectralItemFrameRenderer;
@@ -33,6 +35,12 @@ public class BrankosBuildingDetailsClient implements ClientModInitializer {
 
 		// Register spectral particle provider with custom texture
 		ParticleProviderRegistry.getInstance().register(BrankosBuildingDetails.SPECTRAL_PARTICLE, SpectralParticleProvider::new);
+
+		// Register falling dirt piece particle provider
+		ParticleProviderRegistry.getInstance().register(BrankosBuildingDetails.FALLING_DIRT_PIECE_PARTICLE, FallingDirtPieceParticleProvider::new);
+
+		// Register falling dirt piece land particle provider
+		ParticleProviderRegistry.getInstance().register(BrankosBuildingDetails.FALLING_DIRT_PIECE_LAND_PARTICLE, FallingDirtPieceLandParticleProvider::new);
 
 		// Track which glass panel face is being attacked on the client side
 		AttackBlockCallback.EVENT.register((player, level, hand, pos, direction) -> {

@@ -21,6 +21,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.resources.Identifier;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -41,6 +42,10 @@ public class BrankosBuildingDetails implements ModInitializer {
 	public static EntityType<GlowSpectralItemFrameEntity> GLOW_SPECTRAL_ITEM_FRAME_TYPE;
 
 	public static final SimpleParticleType SPECTRAL_PARTICLE = FabricParticleTypes.simple(true);
+	public static final SimpleParticleType FALLING_DIRT_PIECE_PARTICLE = FabricParticleTypes.simple(true);
+	public static final SimpleParticleType FALLING_DIRT_PIECE_LAND_PARTICLE = FabricParticleTypes.simple(true);
+
+	public static SoundEvent FALLING_DIRT_PIECE_DROP_SOUND;
 
 	@Override
 	public void onInitialize() {
@@ -69,6 +74,15 @@ public class BrankosBuildingDetails implements ModInitializer {
 		);
 
 		Registry.register(BuiltInRegistries.PARTICLE_TYPE, id("spectral"), SPECTRAL_PARTICLE);
+		Registry.register(BuiltInRegistries.PARTICLE_TYPE, id("falling_dirt_piece"), FALLING_DIRT_PIECE_PARTICLE);
+		Registry.register(BuiltInRegistries.PARTICLE_TYPE, id("falling_dirt_piece_land"), FALLING_DIRT_PIECE_LAND_PARTICLE);
+
+		Identifier dirtDropId = id("falling_dirt_piece_drop");
+		FALLING_DIRT_PIECE_DROP_SOUND = Registry.register(
+			BuiltInRegistries.SOUND_EVENT,
+			dirtDropId,
+			SoundEvent.createVariableRangeEvent(dirtDropId)
+		);
 
 		BrankosBuildingDetailsBlocks.initialize();
 		BrankosBuildingDetailsItems.initialize();

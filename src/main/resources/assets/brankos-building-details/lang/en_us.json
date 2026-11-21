@@ -9,5 +9,6 @@
   "block.brankos-building-details.red_sandstone_brick_wall": "Red Sandstone Brick Wall",
   "block.brankos-building-details.glass_panel": "Glass Panel",
   "item.brankos-building-details.spectral_item_frame": "Spectral Item Frame",
-  "item.brankos-building-details.glow_spectral_item_frame": "Glow Spectral Item Frame"
+  "item.brankos-building-details.glow_spectral_item_frame": "Glow Spectral Item Frame",
+  "subtitles.brankos-building-details.falling_dirt_piece_drop": "Dirt piece drops"
 }

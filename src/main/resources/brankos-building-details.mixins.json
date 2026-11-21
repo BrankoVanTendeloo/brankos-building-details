@@ -8,7 +8,8 @@
     "MoveControlMixin",
     "GlassPanelPathCollisionMixin",
     "NodeEvaluatorAccessor",
-    "WalkNodeEvaluatorMixin"
+    "WalkNodeEvaluatorMixin",
+    "HangingRootsBlockMixin"
   ],
   "injectors": {
     "defaultRequire": 1

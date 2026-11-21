@@ -1,0 +1,11 @@
+{
+  "falling_dirt_piece_drop": {
+    "subtitle": "subtitles.brankos-building-details.falling_dirt_piece_drop",
+    "sounds": [
+      {
+        "name": "brankos-building-details:particle/dirt_piece/dirt_piece_drop",
+        "attenuation_distance": 16
+      }
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:stonecutting",
+  "category": "building",
+  "ingredient": "minecraft:red_sandstone",
+  "result": {
+    "count": 2,
+    "id": "brankos-building-details:red_sandstone_brick_slab"
+  }
+}

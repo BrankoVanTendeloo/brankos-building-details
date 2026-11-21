@@ -5,8 +5,6 @@
     "S": "brankos-building-details:sandstone_bricks"
   },
   "pattern": [
-    "SSS",
-    "SSS",
     "SSS"
   ],
   "result": {
